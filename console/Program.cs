@@ -87,6 +87,11 @@ namespace LegacyProductSystem
             return produtos;
         }
 
+        public List<Produto> ObterProdutos()
+        {
+            return produtos;
+        }
+
         public decimal CalcularValorTotalEstoque()
         {
             decimal total = 0;
