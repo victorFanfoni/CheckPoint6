@@ -1,72 +1,184 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace LegacySystem
 {
     class MainSistema
     {
         static void Main(string[] args)
-        {
-            SistemaCliente sc = new SistemaCliente();
-            sc.AddCliente(1, "Joao", "joao@email.com");
-            sc.AddCliente(2, "Maria", "maria@email.com");
+        {s
+            SistemaCliente sistemaClientes = new SistemaCliente();
+            sistemaClientes.AdicionarCliente(1, "Joao", "joao@email.com");
+            sistemaClientes.AdicionarCliente(2, "Maria", "maria@email.com");
 
-            SistemaTransacoes st = new SistemaTransacoes();
-            st.AdicionarTransacao(1, 100.50m, "Compra de Produto");
-            st.AdicionarTransacao(2, 200.00m, "Compra de Serviço");
-            st.AdicionarTransacao(3, 300.75m, "Compra de Software");
+            SistemaTransacoes sistemaTransacoes = new SistemaTransacoes();
+            sistemaTransacoes.AdicionarTransacao(1, 100.50m, "Compra de Produto");
+            sistemaTransacoes.AdicionarTransacao(2, 200.00m, "Compra de Serviço");
+            sistemaTransacoes.AdicionarTransacao(3, 300.75m, "Compra de Software");
 
-            sc.ExibirTodosOsClientes();
-            st.ExibirTransacoes();
+            Console.WriteLine("Clientes:");
+            sistemaClientes.ExibirTodosOsClientes();
 
-            sc.removerCliente(1);
-            sc.ExibirTodosOsClientes();
+            Console.WriteLine("\nTransações:");
+            sistemaTransacoes.ExibirTransacoes();
 
-            sc.AtualizarNomeCliente(2, "Maria Silva");
+            sistemaClientes.RemoverCliente(1);
+            Console.WriteLine("\nClientes após remoção:");
+            sistemaClientes.ExibirTodosOsClientes();
 
-            string nomeEmpresa = "Empresa Teste";
-            string descricaoTransacao = "Compra de Insumo";
+            sistemaClientes.AtualizarNomeCliente(2, "Maria Silva");
 
-            for (int i = 0; i < 5; i++)
-            {
-                Console.WriteLine("Nome da Empresa: " + nomeEmpresa + " Descrição: " + descricaoTransacao);
-            }
+            const string NomeEmpresa = "Empresa Teste";
+            const string DescricaoTransacao = "Compra de Insumo";
+            const int Repeticoes = 5;
 
-            for (int i = 0; i < 5; i++)
-            {
-                Console.WriteLine("Nome da Empresa: " + nomeEmpresa + " Descrição: " + descricaoTransacao);
-            }
-
-            for (int i = 0; i < 5; i++)
-            {
-                Console.WriteLine("Nome da Empresa: " + nomeEmpresa + " Descrição: " + descricaoTransacao);
-            }
-
-            for (int i = 0; i < 5; i++)
-            {
-                Console.WriteLine("Nome da Empresa: " + nomeEmpresa + " Descrição: " + descricaoTransacao);
-            }
+            ExibirNomeEmpresa(NomeEmpresa, DescricaoTransacao, Repeticoes);
 
             Relatorio relatorio = new Relatorio();
-            relatorio.GerarRelatorioCliente(sc.clientes);
-            relatorio.GerarRelatorioClienteDuplicado(sc.clientes);
+            relatorio.GerarRelatorioClientes(sistemaClientes.ObterClientes());
 
-            int soma = 0;
-            for (int i = 0; i < 10; i++)
+            int soma = SomarNumeros(10);
+            Console.WriteLine("\nSoma total: " + soma);
+        }
+
+        #region Métodos Utilitários
+
+        static void ExibirNomeEmpresa(string nomeEmpresa, string descricaoTransacao, int repeticoes)
+        {
+            for (int i = 0; i < repeticoes; i++)
             {
-                //Soma mais 1
+                Console.WriteLine($"Nome da Empresa: {nomeEmpresa} Descrição: {descricaoTransacao}");
+            }
+        }
+
+        static int SomarNumeros(int limite)
+        {
+            int soma = 0;
+            for (int i = 0; i < limite; i++)
+            {
                 soma += i;
             }
+            return soma;
+        }
 
-            Console.WriteLine("Soma total: " + soma);
+        #endregion
+    }
 
-            int somaDuplicada = 0;
-            for (int i = 0; i < 10; i++)
+    #region Classes de Sistema
+
+    public class SistemaCliente
+    {
+        private readonly List<Cliente> _clientes = new List<Cliente>();
+
+        public void AdicionarCliente(int id, string nome, string email)
+        {
+            _clientes.Add(new Cliente(id, nome, email));
+        }
+
+        public void RemoverCliente(int id)
+        {
+            _clientes.RemoveAll(c => c.Id == id);
+        }
+
+        public void AtualizarNomeCliente(int id, string novoNome)
+        {
+            Cliente cliente = _clientes.Find(c => c.Id == id);
+            if (cliente != null)
             {
-                //Soma Duplicada
-                somaDuplicada += i;
+                cliente.AtualizarNome(novoNome);
+            }
+        }
+
+        public void ExibirTodosOsClientes()
+        {
+            foreach (Cliente cliente in _clientes)
+            {
+                Console.WriteLine(cliente);
+            }
+        }
+
+        public List<Cliente> ObterClientes()
+        {
+            return new List<Cliente>(_clientes);
+        }
+    }
+
+    public class SistemaTransacoes
+    {
+        private readonly List<Transacao> _transacoes = new List<Transacao>();
+
+        public void AdicionarTransacao(int id, decimal valor, string descricao)
+        {
+            _transacoes.Add(new Transacao(id, valor, descricao));
+        }
+
+        public void ExibirTransacoes()
+        {
+            foreach (Transacao transacao in _transacoes)
+            {
+                Console.WriteLine(transacao);
             }
         }
     }
+
+    #endregion
+
+    #region Classes de Modelos
+
+    public class Cliente
+    {
+        public int Id { get; }
+        public string Nome { get; private set; }
+        public string Email { get; }
+
+        public Cliente(int id, string nome, string email)
+        {
+            Id = id;
+            Nome = nome;
+            Email = email;
+        }
+
+        public void AtualizarNome(string novoNome)
+        {
+            Nome = novoNome;
+        }
+
+        public override string ToString()
+        {
+            return $"Cliente: {Id}, Nome: {Nome}, Email: {Email}";
+        }
+    }
+
+    public class Transacao
+    {
+        public int Id { get; }
+        public decimal Valor { get; }
+        public string Descricao { get; }
+
+        public Transacao(int id, decimal valor, string descricao)
+        {
+            Id = id;
+            Valor = valor;
+            Descricao = descricao;
+        }
+
+        public override string ToString()
+        {
+            return $"Transação: {Id}, Valor: {Valor}, Descrição: {Descricao}";
+        }
+    }
+
+    public class Relatorio
+    {
+        public void GerarRelatorioClientes(List<Cliente> clientes)
+        {
+            Console.WriteLine("\nRelatório de Clientes:");
+            foreach (Cliente cliente in clientes)
+            {
+                Console.WriteLine(cliente);
+            }
+        }
+    }
+
+    #endregion
 }

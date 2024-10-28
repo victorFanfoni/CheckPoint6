@@ -1,185 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace LegacySystem
 {
-    //Classe Cliente
-    class cliente
+    class Client
     {
-        public int Id;
-        public string nome;
-        public string EMAIL;
-        public DateTime cadastro;
+        public int Id { get; set; }
+        public string Name { get; private set; }
+        public string Email { get; private set; }
+        public DateTime RegistrationDate { get; private set; }
 
-        public cliente(int i, string n, string e)
+        public Client(int id, string name, string email)
         {
-            Id = i;
-            nome = n;
-            EMAIL = e;
-            cadastro = DateTime.Now;
+            Id = id;
+            Name = name;
+            Email = email;
+            RegistrationDate = DateTime.Now;
         }
 
-        public void mudarNome(string n)
+        public void UpdateName(string name)
         {
-            if (n != null && n.Length > 0)
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                nome = n;
+                Name = name;
             }
         }
 
-        public void AtualizarEmail(string e)
+        public void UpdateEmail(string email)
         {
-            if (e != null && e.Contains("@"))
+            if (!string.IsNullOrWhiteSpace(email) && email.Contains("@"))
             {
-                EMAIL = e;
+                Email = email;
             }
         }
 
-        public void ExibirDados()
+        public void DisplayData()
         {
-            Console.WriteLine("Id: " + Id + " Nome: " + nome + " Email: " + EMAIL + " Cadastro: " + cadastro);
-        }
-
-        public void ExibirDadosOut()
-        {
-            Console.WriteLine("Id: " + Id + " Nome: " + nome + " Email: " + EMAIL + " Cadastro: " + cadastro);
-            Console.WriteLine("Id: " + Id + " Nome: " + nome + " Email: " + EMAIL + " Cadastro: " + cadastro);
+            Console.WriteLine($"Id: {Id} | Name: {Name} | Email: {Email} | Registration Date: {RegistrationDate}");
         }
     }
 
-    // Classe Transações
-    class Transacoes
+    class Transaction
     {
-        public int id;
-        public decimal v;
-        public DateTime d;
-        public string descricao;
+        public int Id { get; set; }
+        public decimal Amount { get; private set; }
+        public DateTime Date { get; private set; }
+        public string Description { get; private set; }
 
-        public Transacoes(int i, decimal val, string desc)
+        public Transaction(int id, decimal amount, string description)
         {
-            id = i;
-            v = val;
-            d = DateTime.Now;
-            descricao = desc;
+            Id = id;
+            Amount = amount;
+            Date = DateTime.Now;
+            Description = description;
         }
 
-        public void ExibirTransacao()
+        public void DisplayTransaction()
         {
-            Console.WriteLine("Id: " + id + " Valor: " + v + " Descricao: " + descricao + " Data: " + d);
-        }
-
-        public void ExibirTransacaoDuplicada()
-        {
-            Console.WriteLine("Id: " + id + " Valor: " + v + " Descricao: " + descricao + " Data: " + d);
-            Console.WriteLine("Id: " + id + " Valor: " + v + " Descricao: " + descricao + " Data: " + d);
+            Console.WriteLine($"Id: {Id} | Amount: {Amount} | Description: {Description} | Date: {Date}");
         }
     }
 
-    //Classe Sistema Transações
-    class SistemaTransacoes
+    class TransactionSystem
     {
-        public List<Transacoes> listaDeTransacoes = new List<Transacoes>();
+        private List<Transaction> transactions = new List<Transaction>();
 
-        public void AdicionarTransacao(int id, decimal valor, string descricao)
+        public void AddTransaction(int id, decimal amount, string description)
         {
-            Transacoes t = new Transacoes(id, valor, descricao);
-            listaDeTransacoes.Add(t);
+            transactions.Add(new Transaction(id, amount, description));
         }
 
-        public void ExibirTransacoes()
+        public void DisplayTransactions()
         {
-            foreach (var transacao in listaDeTransacoes)
+            foreach (var transaction in transactions)
             {
-                Console.WriteLine("Id: " + transacao.id + " Valor: " + transacao.v + " Descrição: " + transacao.descricao);
-            }
-        }
-
-        public void ExibirTransacoesOut()
-        {
-            foreach (var transacao in listaDeTransacoes)
-            {
-                Console.WriteLine("Id: " + transacao.id + " Valor: " + transacao.v + " Descrição: " + transacao.descricao);
-            }
-
-            foreach (var transacao in listaDeTransacoes)
-            {
-                Console.WriteLine("Id: " + transacao.id + " Valor: " + transacao.v + " Descrição: " + transacao.descricao);
+                transaction.DisplayTransaction();
             }
         }
     }
 
-    //Classe Sistema Cliente
-    class SistemaCliente
+    class ClientSystem
     {
-        public List<cliente> clientes = new List<cliente>();
+        private List<Client> clients = new List<Client>();
 
-        public void AddCliente(int id, string nome, string email)
+        public void AddClient(int id, string name, string email)
         {
-            clientes.Add(new cliente(id, nome, email));
+            clients.Add(new Client(id, name, email));
         }
 
-        public void removerCliente(int id)
+        public void RemoveClient(int id)
         {
-            cliente c = clientes.Find(x => x.Id == id);
-            if (c != null)
-            {
-                clientes.Remove(c);
-            }
+            clients.RemoveAll(c => c.Id == id);
         }
 
-        public void ExibirTodosOsClientes()
+        public void DisplayAllClients()
         {
-            foreach (cliente c in clientes)
+            foreach (var client in clients)
             {
-                Console.WriteLine("ID: " + c.Id + " Nome: " + c.nome + " Email: " + c.EMAIL);
+                client.DisplayData();
             }
         }
 
-        public void ExibirTodosOsClientesOut()
+        public void UpdateClientName(int id, string name)
         {
-            foreach (cliente c in clientes)
-            {
-                Console.WriteLine("ID: " + c.Id + " Nome: " + c.nome + " Email: " + c.EMAIL);
-            }
-
-            foreach (cliente c in clientes)
-            {
-                Console.WriteLine("ID: " + c.Id + " Nome: " + c.nome + " Email: " + c.EMAIL);
-            }
-        }
-
-        public void AtualizarNomeCliente(int id, string nome)
-        {
-            cliente c = clientes.Find(x => x.Id == id);
-            if (c != null)
-            {
-                c.mudarNome(nome);
-            }
+            Client client = clients.Find(c => c.Id == id);
+            client?.UpdateName(name);
         }
     }
 
-    //Classe Relatório
-    class Relatorio
+    class Report
     {
-        public void GerarRelatorioCliente(List<cliente> clientes)
+        public void GenerateClientReport(List<Client> clients)
         {
-            foreach (var c in clientes)
+            foreach (var client in clients)
             {
-                Console.WriteLine("Cliente: " + c.nome + " | Email: " + c.EMAIL);
-            }
-        }
-
-        public void GerarRelatorioClienteDuplicado(List<cliente> clientes)
-        {
-            foreach (var c in clientes)
-            {
-                Console.WriteLine("Cliente: " + c.nome + " | Email: " + c.EMAIL);
-            }
-
-            foreach (var c in clientes)
-            {
-                Console.WriteLine("Cliente: " + c.nome + " | Email: " + c.EMAIL);
+                Console.WriteLine($"Client: {client.Name} | Email: {client.Email}");
             }
         }
     }
